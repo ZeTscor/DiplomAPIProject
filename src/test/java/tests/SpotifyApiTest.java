@@ -7,6 +7,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
+import spec.ApiSpec;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnTopTenSong() {
         Response responseTopTracks =
                 given()
+                        .spec(responseSpecInstance.getRequestSpec())
                         .auth().oauth2(this.accessToken)
                         .accept(ContentType.JSON)
                         .queryParam("country", "RU")
@@ -64,6 +66,24 @@ public class SpotifyApiTest extends TestBase {
         List<String> music = responseTopTracks.jsonPath().getList("tracks.name");
         System.out.println(music.get(6));
         assertThat(music.contains("Москва"));
+
+    }
+    ApiSpec responseSpecInstance = new ApiSpec();
+    @Test
+    public void getCurrentUserProfile() {
+        Response responseTracks =  given()
+                .spec(responseSpecInstance.getRequestSpec())
+                .auth().oauth2(this.accessToken)
+                .when()
+                .header("Authorization" , "Bearer" + accessToken)
+                .header("Content-Type" , "application/json")
+                .get("/tracks/11dFghVXANMlKmJXsNCbNl")
+                .then()
+                .statusCode(200)
+                .assertThat()
+                .extract()
+                .response();
+
 
     }
 
