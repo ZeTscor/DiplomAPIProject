@@ -17,5 +17,8 @@ import org.aeonbits.owner.Config;
         String baseUrl();
         @Key("basePath")
         String basePath();
+        @Key("userToken")
+        String userToken();
+
     }
 

@@ -35,7 +35,7 @@ dependencies {
     testRuntimeOnly(
             "org.slf4j:slf4j-simple:1.7.29",
             "org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-    testCompileOnly ('org.projectlombok:lombok:1.18.22',
+    testCompileOnly('org.projectlombok:lombok:1.18.22',
             'org.aeonbits.owner:owner:1.0.12')
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.5'

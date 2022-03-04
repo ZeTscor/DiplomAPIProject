@@ -3,26 +3,32 @@ package tests;
 import api.helpers.EncodeToken;
 import api.helpers.Encoder;
 import config.ApiConfig;
+import data.DataStorage;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import api.helpers.EncodeToken;
-import api.helpers.Encoder;
+
 
 import static io.restassured.RestAssured.given;
 
 
 public class TestBase {
-    public static String accessToken = "";
+
+
+    public static String apiaccessToken = "";
     static ApiConfig api = ConfigFactory.create(ApiConfig.class, System.getProperties());
+    static String userToken = System.getProperty("userToken", api.userToken());
+    DataStorage data = new DataStorage();
+
 
     @BeforeAll
     public static void authenticationSpotify() {
         RestAssured.baseURI = api.baseUrlAuth();
         String authToken = EncodeToken.getAuthToken(api.clientId(), api.clientSecret());
         generateAccessToken(authToken);
+
     }
 
     private static void generateAccessToken(String authToken) {
@@ -34,7 +40,7 @@ public class TestBase {
                 when().
                 post("token");
 
-        accessToken = response.jsonPath().get("access_token");
+        apiaccessToken = response.jsonPath().get("access_token");
     }
 
 
