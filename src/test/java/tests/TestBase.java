@@ -31,8 +31,8 @@ public class TestBase {
 
     @BeforeAll
     public static void authenticationSpotify() {
-        RestAssured.baseURI = api.baseUrlAuth();
-        String authToken = EncodeToken.getAuthToken(api.clientId(), api.clientSecret());
+        RestAssured.baseURI = baseUrl;
+        String authToken = EncodeToken.getAuthToken(clientId, clientSecret);
         generateAccessToken(authToken);
 
     }
@@ -54,7 +54,7 @@ public class TestBase {
 
     @BeforeEach
     public void antesTestes() {
-        RestAssured.baseURI = api.baseUrl();
-        RestAssured.basePath = api.basePath();
+        RestAssured.baseURI = baseUrl;
+        RestAssured.basePath = basePath;
     }
 }
