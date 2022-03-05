@@ -1,6 +1,7 @@
 package tests;
 
 
+import api.filter.CustomLogFilter;
 import api.lombok.Artist;
 import io.qameta.allure.*;
 import io.restassured.http.ContentType;
@@ -8,10 +9,11 @@ import io.restassured.response.Response;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import spec.ApiSpec;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -26,6 +28,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnArtist() {
         Response response =
                 given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
                         .queryParam("q", data.getArtist())
@@ -52,6 +55,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnTopTenSong() {
         Response responseTopTracks =
                 given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                         .spec(responseSpecInstance.getRequestSpec())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
@@ -78,6 +82,7 @@ public class SpotifyApiTest extends TestBase {
     public void getUserAllDetail() {
         Response response =
                 given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                         .contentType("application/json; charset=UTF-8")
                         .spec(responseSpecInstance.getRequestSpec())
                         .when()
@@ -94,13 +99,18 @@ public class SpotifyApiTest extends TestBase {
 
     }
 
+    @DisplayName("Получение идентификатора трека ")
+    @Disabled
+    @Owner("a.kulakov")
+    @Feature("API")
     @Test
     public void shouldReturnTrackUri() {
         Response response =
                 given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
-                        .queryParam("q", "Казачья,Mongol Shuudan")
+                        .queryParam("q", data.getTracksName() + " " + data.getArtistName())
                         .queryParam("type", "track,artist")
                         .queryParam("limit", "1")
                         .when()
@@ -109,37 +119,69 @@ public class SpotifyApiTest extends TestBase {
                         .statusCode(200)
                         .extract()
                         .response();
-        ArrayList arrayList = response.path("tracks.items.uri");
-        System.out.println(arrayList);
+        ArrayList returnTrackUri = response.path("tracks.items.uri");
+        Assertions.assertEquals(data.getUrisTrack(), returnTrackUri.get(0).toString());
 
     }
-
+    @DisplayName("Добавление трека в плейслист")
+    @Owner("a.kulakov")
+    @Feature("API")
     @Test
     public void addTrackToPlaylist() {
         given()
+                .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                 .contentType("application/json; charset=UTF-8")
                 .spec(responseSpecInstance.getRequestSpec())
-                .queryParam("playlist_id", "5wqWIF6vcN4MAPDUJCgZl9")
-                .queryParam("uris", "spotify:track:5KErrSqoZcQRImu0r4z9nc")
+                .queryParam("playlist_id", data.getPlaylistId())
+                .queryParam("uris", data.getUrisTrack())
                 .header("Authorization", "Bearer " + userToken)
                 .when()
-                .post("playlists/{playlist_id}/tracks", "5wqWIF6vcN4MAPDUJCgZl9")
+                .post("playlists/{playlist_id}/tracks", data.getPlaylistId())
                 .then()
                 .statusCode(201);
 
         Response itemResponse =
                 given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
                         .contentType("application/json; charset=UTF-8")
                         .header("Authorization", "Bearer " + userToken)
                         .queryParam("limit", "1")
                         .when()
-                        .get("playlists/{playlist_id}/tracks", "5wqWIF6vcN4MAPDUJCgZl9")
+                        .get("playlists/{playlist_id}/tracks", data.getPlaylistId())
                         .then()
                         .statusCode(200)
                         .extract()
                         .response();
-        ArrayList arrayList = itemResponse.path("items.track.uri");
-        Assertions.assertEquals("spotify:track:5KErrSqoZcQRImu0r4z9nc",arrayList.get(0));
+        ArrayList trackUri = itemResponse.path("items.track.uri");
+        Assertions.assertEquals(data.getUrisTrack(), trackUri.get(0));
 
+    }
+    @DisplayName("Удаления трека из плейлиста")
+    @Owner("a.kulakov")
+    @Feature("API")
+    @Test
+    public void removeItemFromPlaylist() throws IOException {
+       given().contentType(ContentType.JSON)
+                .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                .accept(ContentType.JSON)
+                .header("Authorization", "Bearer " + userToken)
+                .body(data.getBody())
+                .when()
+                .delete("playlists/{playlist_id}/tracks", data.getPlaylistId());
+
+        Response itemResponse =
+                given()
+                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .contentType("application/json; charset=UTF-8")
+                        .header("Authorization", "Bearer " + userToken)
+                        .queryParam("limit", "1")
+                        .when()
+                        .get("playlists/{playlist_id}/tracks", data.getPlaylistId())
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .response();
+        ArrayList trackUri = itemResponse.path("items.track.uri");
+        Assertions.assertTrue(trackUri.isEmpty());
     }
 }

@@ -12,4 +12,17 @@ public class DataStorage {
     private String tracksName = "Казачья";
     private String userName = "Zets";
     private String product = "open";
+    private String playlistId = "5wqWIF6vcN4MAPDUJCgZl9";
+    private String urisTrack = "spotify:track:5KErrSqoZcQRImu0r4z9nc";
+    private String body = "{\n" +
+            "  \"tracks\": [\n" +
+            "    {\n" +
+            "      \"uri\": \""+urisTrack+"\",\n" +
+            "      \"positions\": [\n" +
+            "        0\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
+
 }
