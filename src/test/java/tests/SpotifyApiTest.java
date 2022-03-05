@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import static api.filter.CustomLogFilter.customLogFilter;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -28,7 +29,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnArtist() {
         Response response =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
                         .queryParam("q", data.getArtist())
@@ -55,7 +56,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnTopTenSong() {
         Response responseTopTracks =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .spec(responseSpecInstance.getRequestSpec())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
@@ -82,7 +83,7 @@ public class SpotifyApiTest extends TestBase {
     public void getUserAllDetail() {
         Response response =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .contentType("application/json; charset=UTF-8")
                         .spec(responseSpecInstance.getRequestSpec())
                         .when()
@@ -107,7 +108,7 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnTrackUri() {
         Response response =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .auth().oauth2(this.apiaccessToken)
                         .accept(ContentType.JSON)
                         .queryParam("q", data.getTracksName() + " " + data.getArtistName())
@@ -129,7 +130,7 @@ public class SpotifyApiTest extends TestBase {
     @Test
     public void addTrackToPlaylist() {
         given()
-                .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                .filter(customLogFilter().withCustomTemplates())
                 .contentType("application/json; charset=UTF-8")
                 .spec(responseSpecInstance.getRequestSpec())
                 .queryParam("playlist_id", data.getPlaylistId())
@@ -142,7 +143,7 @@ public class SpotifyApiTest extends TestBase {
 
         Response itemResponse =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .contentType("application/json; charset=UTF-8")
                         .header("Authorization", "Bearer " + userToken)
                         .queryParam("limit", "1")
@@ -162,7 +163,7 @@ public class SpotifyApiTest extends TestBase {
     @Test
     public void removeItemFromPlaylist() throws IOException {
        given().contentType(ContentType.JSON)
-                .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                .filter(customLogFilter().withCustomTemplates())
                 .accept(ContentType.JSON)
                 .header("Authorization", "Bearer " + userToken)
                 .body(data.getBody())
@@ -171,7 +172,7 @@ public class SpotifyApiTest extends TestBase {
 
         Response itemResponse =
                 given()
-                        .filter(CustomLogFilter.customLogFilter().withCustomTemplates())
+                        .filter(customLogFilter().withCustomTemplates())
                         .contentType("application/json; charset=UTF-8")
                         .header("Authorization", "Bearer " + userToken)
                         .queryParam("limit", "1")
