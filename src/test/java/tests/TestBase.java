@@ -22,17 +22,13 @@ public class TestBase {
     public static String apiaccessToken = "";
     static ApiConfig api = ConfigFactory.create(ApiConfig.class, System.getProperties());
     static String userToken = System.getProperty("userToken", api.userToken());
-    static String clientId = System.getProperty("clientId", api.clientId());
-    static String clientSecret = System.getProperty("clientSecret", api.clientSecret());
-    static String baseUrl = System.getProperty("baseUrl", api.baseUrl());
-    static String basePath = System.getProperty("basePath", api.basePath());
     DataStorage data = new DataStorage();
 
 
     @BeforeAll
     public static void authenticationSpotify() {
-        RestAssured.baseURI = baseUrl;
-        String authToken = EncodeToken.getAuthToken(clientId, clientSecret);
+        RestAssured.baseURI = api.baseUrlAuth();
+        String authToken = EncodeToken.getAuthToken(api.clientId(), api.clientSecret());
         generateAccessToken(authToken);
 
     }
@@ -54,7 +50,7 @@ public class TestBase {
 
     @BeforeEach
     public void antesTestes() {
-        RestAssured.baseURI = baseUrl;
-        RestAssured.basePath = basePath;
+        RestAssured.baseURI = api.baseUrl();
+        RestAssured.basePath = api.basePath();
     }
 }
