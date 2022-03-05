@@ -29,8 +29,8 @@ public class SpotifyApiTest extends TestBase {
     public void shouldReturnArtist() {
         Response response =
                 given()
-                        .filter(customLogFilter().withCustomTemplates())
                         .auth().oauth2(this.apiaccessToken)
+                        .filter(customLogFilter().withCustomTemplates())
                         .accept(ContentType.JSON)
                         .queryParam("q", data.getArtist())
                         .queryParam("type", "artist")
@@ -55,10 +55,9 @@ public class SpotifyApiTest extends TestBase {
     @Test
     public void shouldReturnTopTenSong() {
         Response responseTopTracks =
-                given()
-                        .filter(customLogFilter().withCustomTemplates())
-                        .spec(responseSpecInstance.getRequestSpec())
+                given() .spec(responseSpecInstance.getRequestSpec())
                         .auth().oauth2(this.apiaccessToken)
+                        .filter(customLogFilter().withCustomTemplates())
                         .accept(ContentType.JSON)
                         .queryParam("country", data.getCountry())
                         .when()
@@ -69,8 +68,8 @@ public class SpotifyApiTest extends TestBase {
                         .extract()
                         .response();
         List<String> music = responseTopTracks.jsonPath().getList("tracks.name");
-        System.out.println(music.get(6));
-        Assertions.assertEquals(music.get(6), data.getTracksName());
+        System.out.println(music.get(5));
+        Assertions.assertEquals(music.get(5), data.getTracksName());
 
     }
 
@@ -101,7 +100,6 @@ public class SpotifyApiTest extends TestBase {
     }
 
     @DisplayName("Получение идентификатора трека ")
-    @Disabled
     @Owner("a.kulakov")
     @Feature("API")
     @Test
