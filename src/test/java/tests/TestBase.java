@@ -22,6 +22,10 @@ public class TestBase {
     public static String apiaccessToken = "";
     static ApiConfig api = ConfigFactory.create(ApiConfig.class, System.getProperties());
     static String userToken = System.getProperty("userToken", api.userToken());
+    static String clientId = System.getProperty("clientId", api.clientId());
+    static String clientSecret = System.getProperty("clientSecret", api.clientSecret());
+    static String baseUrl = System.getProperty("baseUrl", api.baseUrl());
+    static String basePath = System.getProperty("basePath", api.basePath());
     DataStorage data = new DataStorage();
 
 
